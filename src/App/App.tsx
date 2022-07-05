@@ -17,7 +17,7 @@ const App: FC = () => {
   useEffect(() => {
     usersStore
       .getUsers()
-      .then((res) => setUsersData(usersStore.data))
+      .then((res) => setUsersData(usersStore.tableData))
       .then((res) => setColumnsData(usersStore.getColumns()));
   }, []);
 

@@ -2,10 +2,16 @@ import { ColumnsType } from 'antd/lib/table';
 
 import { DataType } from '../types/types';
 
+type DaysType = {
+  Date: string;
+  End: string;
+  Start: string;
+};
+
 type ResponseDataType = {
   id: number;
   Fullname: string;
-  Days: Array<{ Date: string; End: string; Start: string }>;
+  Days: DaysType[];
 };
 
 class UsersStore {
@@ -19,51 +25,51 @@ class UsersStore {
     },
   ];
 
-  private _date = '';
-  private _data: DataType[] = [];
+  private _tableData: DataType[] = [];
+  private _responseData: ResponseDataType[] = [];
 
   getUsers = async () => {
     try {
       const response = await fetch(`${this.BASE_URL}/api/users`);
       const data = await response.json();
 
-      this._date = data[0].Days[0].Date;
+      this._responseData = data;
 
-      const dataWithKeys = data.map((item: ResponseDataType) => {
+      this._tableData = data.map((item: ResponseDataType) => {
         return {
           key: item.id,
           name: item.Fullname,
-          time: '4:20',
+          ...this.getEachDayTime(item),
         };
       });
-
-      this._data = dataWithKeys;
     } catch (e: any) {
       console.log('error', e);
     }
   };
 
-  get date() {
-    return this._date;
+  get tableData() {
+    return this._tableData;
   }
 
-  get data() {
-    return this._data;
+  get responseData() {
+    return this._responseData;
   }
 
   getDaysColumns = () => {
-    const date = new Date(this._date);
+    // getting the first date of the first user to get current month and year
+    const date = new Date(this.responseData[0].Days[0].Date);
     const month = date.getMonth() - 1;
     const year = date.getFullYear();
 
-    const daysAmount = new Date(year, month, 0).getDate();
+    // number of days in current month === columns amount
+    const daysInMonth = new Date(year, month, 0).getDate();
 
     const columns: ColumnsType<DataType> = [];
 
-    for (let day = 1; day <= daysAmount; day++) {
+    for (let day = 1; day <= daysInMonth; day++) {
       columns.push({
         key: day,
-        dataIndex: 'time',
+        dataIndex: `time${day}`,
         title: day,
       });
     }
@@ -73,6 +79,49 @@ class UsersStore {
 
   getColumns = () => {
     return [...this.firstColumn, ...this.getDaysColumns()];
+  };
+
+  getSpentTime = (start: string, end: string) => {
+    const [startH, startM] = start.split('-');
+    const [endH, endM] = end.split('-');
+
+    const diff = +endH * 60 + +endM - (+startH * 60 + +startM);
+    const h = Math.trunc(diff / 60);
+    const m = diff - h * 60;
+
+    return `${h}:${m}`;
+  };
+
+  // getting spent time for each day of month for given user
+  getEachDayTime = (user: ResponseDataType) => {
+    const daysMap = new Map<string, string>();
+
+    // to keep valid index of day in case of null time days
+    let currentNotNullDay = 1;
+
+    for (let day = 1; day <= 31; day++) {
+      const currentDay = user.Days[currentNotNullDay - 1];
+
+      if (this.isTimeNotNull(currentDay, day)) {
+        const spentTime = this.getSpentTime(
+          user.Days[currentNotNullDay - 1].Start,
+          user.Days[currentNotNullDay - 1].End
+        );
+
+        daysMap.set(`time${day}`, spentTime);
+
+        currentNotNullDay++;
+      } else {
+        daysMap.set(`time${day}`, '0');
+      }
+    }
+
+    return Object.fromEntries(daysMap);
+  };
+
+  isTimeNotNull = (currentDay: DaysType, day: number) => {
+    const dayString = currentDay ? currentDay.Date.split('-')[2] : '';
+    return Number(dayString) === day;
   };
 }
 
