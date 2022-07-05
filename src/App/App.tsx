@@ -1,26 +1,27 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
+import { useEffect } from 'react';
+
+import '../styles/index.css';
+import { Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+
+import UsersStore from '../store/UsersStore';
+import { DataType } from '../types/types';
 
 const App: FC = () => {
-  const getUsers = async () => {
-    const BASE_URL = 'http://localhost:8080';
+  const [usersData, setUsersData] = useState<DataType[]>([]);
+  const [columnsData, setColumnsData] = useState<ColumnsType<DataType>>([]);
 
-    try {
-      const response = await fetch(`${BASE_URL}/api/users`);
-      const data = await response.json();
+  const usersStore = new UsersStore();
 
-      console.log('data', data);
-    } catch (e: any) {
-      console.log('error', e);
-    }
-  };
+  useEffect(() => {
+    usersStore
+      .getUsers()
+      .then((res) => setUsersData(usersStore.data))
+      .then((res) => setColumnsData(usersStore.getColumns()));
+  }, []);
 
-  getUsers();
-
-  return (
-    <div>
-      <h1>Hello</h1>
-    </div>
-  );
+  return <Table columns={columnsData} dataSource={usersData} />;
 };
 
 export default App;
