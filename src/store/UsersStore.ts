@@ -3,6 +3,7 @@ import { ColumnsType } from 'antd/lib/table';
 import { DataType } from '../types/types';
 import errorLog from '../utils/errorLog';
 import getTimeStringFromMinutes from '../utils/getTimeStringFromMinutes';
+import timeColumnsSorter from '../utils/timeColumnsSorter';
 
 type DaysType = {
   Date: string;
@@ -123,6 +124,7 @@ class UsersStore {
         key: day,
         dataIndex: `time${day}`,
         title: day,
+        sorter: (a, b) => timeColumnsSorter(a[`time${day}`], b[`time${day}`]),
       });
     }
 

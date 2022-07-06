@@ -5,6 +5,7 @@ import { InputRef } from 'antd';
 import Table, { ColumnsType, ColumnType } from 'antd/lib/table';
 
 import { DataType } from '../../types/types';
+import timeColumnsSorter from '../../utils/timeColumnsSorter';
 import Dropdown from '../Dropdown';
 
 type TableComponentProps = {
@@ -52,6 +53,7 @@ const TableComponent: FC<TableComponentProps> = ({
       title: 'Monthly',
       dataIndex: 'monthly',
       key: 'monthly',
+      sorter: (a, b) => timeColumnsSorter(a.monthly, b.monthly),
     },
   ];
 
