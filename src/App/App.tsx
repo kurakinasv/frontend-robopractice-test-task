@@ -2,26 +2,28 @@ import { FC, useState } from 'react';
 import { useEffect } from 'react';
 
 import '../styles/index.css';
-import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 
+import TableComponent from '../components/TableComponent';
 import UsersStore from '../store/UsersStore';
 import { DataType } from '../types/types';
 
 const App: FC = () => {
   const [usersData, setUsersData] = useState<DataType[]>([]);
-  const [columnsData, setColumnsData] = useState<ColumnsType<DataType>>([]);
+  const [daysColumnsData, setDaysColumnsData] = useState<ColumnsType<DataType>>(
+    []
+  );
 
   const usersStore = new UsersStore();
 
   useEffect(() => {
     usersStore
       .getUsers()
-      .then((res) => setUsersData(usersStore.tableData))
-      .then((res) => setColumnsData(usersStore.getColumns()));
+      .then(() => setUsersData(usersStore.tableData))
+      .then(() => setDaysColumnsData(usersStore.getDaysColumns()));
   }, []);
 
-  return <Table columns={columnsData} dataSource={usersData} />;
+  return <TableComponent daysColumns={daysColumnsData} usersData={usersData} />;
 };
 
 export default App;

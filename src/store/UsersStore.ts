@@ -1,6 +1,7 @@
 import { ColumnsType } from 'antd/lib/table';
 
 import { DataType } from '../types/types';
+import errorLog from '../utils/errorLog';
 import getTimeStringFromMinutes from '../utils/getTimeStringFromMinutes';
 
 type DaysType = {
@@ -37,7 +38,7 @@ class UsersStore {
         };
       });
     } catch (e: any) {
-      console.log('error', e);
+      errorLog('error', e);
     }
   };
 
@@ -115,37 +116,17 @@ class UsersStore {
     // number of days in current month === columns amount
     const daysInMonth = new Date(year, month, 0).getDate();
 
-    const columns: ColumnsType<DataType> = [];
+    const daysColumns: ColumnsType<DataType> = [];
 
     for (let day = 1; day <= daysInMonth; day++) {
-      columns.push({
+      daysColumns.push({
         key: day,
         dataIndex: `time${day}`,
         title: day,
       });
     }
 
-    return columns;
-  };
-
-  getColumns = () => {
-    const firstColumn: ColumnsType<DataType> = [
-      {
-        title: 'User',
-        dataIndex: 'name',
-        key: 'name',
-      },
-    ];
-
-    const lastColumn: ColumnsType<DataType> = [
-      {
-        title: 'Monthly',
-        dataIndex: 'monthly',
-        key: 'monthly',
-      },
-    ];
-
-    return [...firstColumn, ...this.getDaysColumns(), ...lastColumn];
+    return daysColumns;
   };
 }
 
