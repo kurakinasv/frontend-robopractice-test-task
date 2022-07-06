@@ -1,6 +1,7 @@
 import { ColumnsType } from 'antd/lib/table';
 
 import { DataType } from '../types/types';
+import getTimeStringFromMinutes from '../utils/getTimeStringFromMinutes';
 
 type DaysType = {
   Date: string;
@@ -17,14 +18,6 @@ type ResponseDataType = {
 class UsersStore {
   private readonly BASE_URL = 'http://localhost:8080';
 
-  private readonly firstColumn: ColumnsType<DataType> = [
-    {
-      title: 'User',
-      dataIndex: 'name',
-      key: 'name',
-    },
-  ];
-
   private _tableData: DataType[] = [];
   private _responseData: ResponseDataType[] = [];
 
@@ -40,6 +33,7 @@ class UsersStore {
           key: item.id,
           name: item.Fullname,
           ...this.getEachDayTime(item),
+          monthly: this.computeMonthlyTime(item),
         };
       });
     } catch (e: any) {
@@ -77,8 +71,40 @@ class UsersStore {
     return columns;
   };
 
+  computeMonthlyTime = (user: ResponseDataType) => {
+    const daysTimeObj = this.getEachDayTime(user);
+
+    const monthlyMins = Object.values(daysTimeObj).reduce((sum, curr) => {
+      if (curr === '0') {
+        return sum;
+      } else {
+        const [hours, mins] = curr.split(':');
+        const totalMins = +hours * 60 + +mins;
+        return sum + totalMins;
+      }
+    }, 0);
+
+    return getTimeStringFromMinutes(monthlyMins);
+  };
+
   getColumns = () => {
-    return [...this.firstColumn, ...this.getDaysColumns()];
+    const firstColumn: ColumnsType<DataType> = [
+      {
+        title: 'User',
+        dataIndex: 'name',
+        key: 'name',
+      },
+    ];
+
+    const lastColumn: ColumnsType<DataType> = [
+      {
+        title: 'Monthly',
+        dataIndex: 'monthly',
+        key: 'monthly',
+      },
+    ];
+
+    return [...firstColumn, ...this.getDaysColumns(), ...lastColumn];
   };
 
   getSpentTime = (start: string, end: string) => {
@@ -86,10 +112,8 @@ class UsersStore {
     const [endH, endM] = end.split('-');
 
     const diff = +endH * 60 + +endM - (+startH * 60 + +startM);
-    const h = Math.trunc(diff / 60);
-    const m = diff - h * 60;
 
-    return `${h}:${m}`;
+    return getTimeStringFromMinutes(diff);
   };
 
   // getting spent time for each day of month for given user
@@ -102,7 +126,7 @@ class UsersStore {
     for (let day = 1; day <= 31; day++) {
       const currentDay = user.Days[currentNotNullDay - 1];
 
-      if (this.isTimeNotNull(currentDay, day)) {
+      if (this.isDayTimeNotNull(currentDay, day)) {
         const spentTime = this.getSpentTime(
           user.Days[currentNotNullDay - 1].Start,
           user.Days[currentNotNullDay - 1].End
@@ -119,7 +143,7 @@ class UsersStore {
     return Object.fromEntries(daysMap);
   };
 
-  isTimeNotNull = (currentDay: DaysType, day: number) => {
+  isDayTimeNotNull = (currentDay: DaysType, day: number) => {
     const dayString = currentDay ? currentDay.Date.split('-')[2] : '';
     return Number(dayString) === day;
   };
