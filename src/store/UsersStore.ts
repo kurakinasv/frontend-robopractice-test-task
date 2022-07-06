@@ -49,28 +49,6 @@ class UsersStore {
     return this._responseData;
   }
 
-  getDaysColumns = () => {
-    // getting the first date of the first user to get current month and year
-    const date = new Date(this.responseData[0].Days[0].Date);
-    const month = date.getMonth() - 1;
-    const year = date.getFullYear();
-
-    // number of days in current month === columns amount
-    const daysInMonth = new Date(year, month, 0).getDate();
-
-    const columns: ColumnsType<DataType> = [];
-
-    for (let day = 1; day <= daysInMonth; day++) {
-      columns.push({
-        key: day,
-        dataIndex: `time${day}`,
-        title: day,
-      });
-    }
-
-    return columns;
-  };
-
   computeMonthlyTime = (user: ResponseDataType) => {
     const daysTimeObj = this.getEachDayTime(user);
 
@@ -85,26 +63,6 @@ class UsersStore {
     }, 0);
 
     return getTimeStringFromMinutes(monthlyMins);
-  };
-
-  getColumns = () => {
-    const firstColumn: ColumnsType<DataType> = [
-      {
-        title: 'User',
-        dataIndex: 'name',
-        key: 'name',
-      },
-    ];
-
-    const lastColumn: ColumnsType<DataType> = [
-      {
-        title: 'Monthly',
-        dataIndex: 'monthly',
-        key: 'monthly',
-      },
-    ];
-
-    return [...firstColumn, ...this.getDaysColumns(), ...lastColumn];
   };
 
   getSpentTime = (start: string, end: string) => {
@@ -146,6 +104,48 @@ class UsersStore {
   isDayTimeNotNull = (currentDay: DaysType, day: number) => {
     const dayString = currentDay ? currentDay.Date.split('-')[2] : '';
     return Number(dayString) === day;
+  };
+
+  getDaysColumns = () => {
+    // getting the first date of the first user to get current month and year
+    const date = new Date(this.responseData[0].Days[0].Date);
+    const month = date.getMonth() - 1;
+    const year = date.getFullYear();
+
+    // number of days in current month === columns amount
+    const daysInMonth = new Date(year, month, 0).getDate();
+
+    const columns: ColumnsType<DataType> = [];
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      columns.push({
+        key: day,
+        dataIndex: `time${day}`,
+        title: day,
+      });
+    }
+
+    return columns;
+  };
+
+  getColumns = () => {
+    const firstColumn: ColumnsType<DataType> = [
+      {
+        title: 'User',
+        dataIndex: 'name',
+        key: 'name',
+      },
+    ];
+
+    const lastColumn: ColumnsType<DataType> = [
+      {
+        title: 'Monthly',
+        dataIndex: 'monthly',
+        key: 'monthly',
+      },
+    ];
+
+    return [...firstColumn, ...this.getDaysColumns(), ...lastColumn];
   };
 }
 
