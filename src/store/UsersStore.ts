@@ -2,7 +2,7 @@ import { ColumnsType } from 'antd/lib/table';
 
 import { DataType } from '../types/types';
 import errorLog from '../utils/errorLog';
-import getTimeStringFromMinutes from '../utils/getTimeStringFromMinutes';
+import getTimeFromMinutes from '../utils/getTimeFromMinutes';
 import timeColumnsSorter from '../utils/timeColumnsSorter';
 
 type DaysType = {
@@ -64,7 +64,11 @@ class UsersStore {
       }
     }, 0);
 
-    return getTimeStringFromMinutes(monthlyMins);
+    const [h, m] = getTimeFromMinutes(monthlyMins);
+    const hStr = h !== 0 ? `${h}h` : '';
+    const mStr = m !== 0 ? `${m}m` : '';
+
+    return `${hStr} ${mStr}`;
   };
 
   getSpentTime = (start: string, end: string) => {
@@ -73,7 +77,9 @@ class UsersStore {
 
     const diff = +endH * 60 + +endM - (+startH * 60 + +startM);
 
-    return getTimeStringFromMinutes(diff);
+    let [h, m] = getTimeFromMinutes(diff);
+
+    return `${h < 10 ? '0' : ''}${h}:${m < 10 ? '0' : ''}${m}`;
   };
 
   // getting spent time for each day of month for given user
@@ -125,7 +131,7 @@ class UsersStore {
         dataIndex: `time${day}`,
         key: day,
         sorter: (a, b) => timeColumnsSorter(a[`time${day}`], b[`time${day}`]),
-        width: 70,
+        width: 75,
         ellipsis: true,
       });
     }

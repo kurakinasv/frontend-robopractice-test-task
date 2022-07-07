@@ -1,4 +1,4 @@
-const timeColumnsSorter = (a: string, b: string) => {
+const timeColumnsSorter = (a: string, b: string): number => {
   const [aHours, aMins] = a !== '0' ? a.split(':') : [0, 0];
   const [bHours, bMins] = b !== '0' ? b.split(':') : [0, 0];
 

@@ -6,7 +6,7 @@ import Table, { ColumnsType, ColumnType } from 'antd/lib/table';
 import { ResizeCallbackData } from 'react-resizable';
 
 import { DataType } from '../../types/types';
-import timeColumnsSorter from '../../utils/timeColumnsSorter';
+import monthlyColumnSorter from '../../utils/monthlyColumnSorter';
 import Dropdown from '../Dropdown';
 import ResizableTitle from '../ResizableTitle';
 import s from './TableComponent.module.scss';
@@ -42,7 +42,7 @@ const TableComponent: FC<TableComponentProps> = ({
         title: 'Monthly',
         dataIndex: 'monthly',
         key: 'monthly',
-        sorter: (a, b) => timeColumnsSorter(a.monthly, b.monthly),
+        sorter: (a, b) => monthlyColumnSorter(a.monthly, b.monthly),
         fixed: 'right',
         width: 130,
         ellipsis: true,
