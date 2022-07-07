@@ -7,6 +7,7 @@ import Table, { ColumnsType, ColumnType } from 'antd/lib/table';
 import { DataType } from '../../types/types';
 import timeColumnsSorter from '../../utils/timeColumnsSorter';
 import Dropdown from '../Dropdown';
+import s from './TableComponent.module.scss';
 
 type TableComponentProps = {
   usersData: DataType[];
@@ -23,7 +24,9 @@ const TableComponent: FC<TableComponentProps> = ({
     filterDropdown: (props) => <Dropdown {...props} />,
 
     filterIcon: (filtered: boolean) => (
-      <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+      <SearchOutlined
+        style={{ color: filtered ? '#545479' : undefined, fontSize: '18px' }}
+      />
     ),
 
     // determines if the row is displayed when filtered
@@ -45,7 +48,8 @@ const TableComponent: FC<TableComponentProps> = ({
       title: 'User',
       dataIndex: 'name',
       key: 'name',
-      width: '30%',
+      fixed: 'left',
+      width: 180,
       defaultSortOrder: 'ascend',
       sorter: (a, b) => ([a.name, b.name].sort()[0] === a.name ? -1 : 1),
       sortDirections: ['descend'],
@@ -57,10 +61,19 @@ const TableComponent: FC<TableComponentProps> = ({
       dataIndex: 'monthly',
       key: 'monthly',
       sorter: (a, b) => timeColumnsSorter(a.monthly, b.monthly),
+      fixed: 'right',
+      width: 120,
     },
   ];
 
-  return <Table columns={columns} dataSource={usersData} />;
+  return (
+    <Table
+      columns={columns}
+      dataSource={usersData}
+      scroll={{ x: 1300 }}
+      className={s.table}
+    />
+  );
 };
 
 export default TableComponent;

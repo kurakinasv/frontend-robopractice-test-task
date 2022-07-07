@@ -121,10 +121,11 @@ class UsersStore {
 
     for (let day = 1; day <= daysInMonth; day++) {
       daysColumns.push({
-        key: day,
-        dataIndex: `time${day}`,
         title: day,
+        dataIndex: `time${day}`,
+        key: day,
         sorter: (a, b) => timeColumnsSorter(a[`time${day}`], b[`time${day}`]),
+        width: 70,
       });
     }
 

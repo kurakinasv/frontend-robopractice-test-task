@@ -1,12 +1,12 @@
 import { FC, useState } from 'react';
 import { useEffect } from 'react';
 
-import '../styles/index.css';
 import { ColumnsType } from 'antd/lib/table';
 
 import TableComponent from '../components/TableComponent';
 import UsersStore from '../store/UsersStore';
 import { DataType } from '../types/types';
+import s from './App.module.scss';
 
 const App: FC = () => {
   const [usersData, setUsersData] = useState<DataType[]>([]);
@@ -23,7 +23,11 @@ const App: FC = () => {
       .then(() => setDaysColumnsData(usersStore.getDaysColumns()));
   }, []);
 
-  return <TableComponent daysColumns={daysColumnsData} usersData={usersData} />;
+  return (
+    <div className={s.container}>
+      <TableComponent daysColumns={daysColumnsData} usersData={usersData} />
+    </div>
+  );
 };
 
 export default App;
