@@ -4,3 +4,13 @@
     margin: 0 auto;
     padding-top: 5vh;
 }
+
+.spin_container {
+    width: 100%;
+    height: 100vh;
+    margin-top: -5vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

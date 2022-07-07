@@ -1,6 +1,7 @@
 import { FC, useState } from 'react';
 import { useEffect } from 'react';
 
+import { Spin } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 
 import TableComponent from '../components/TableComponent';
@@ -13,6 +14,7 @@ const App: FC = () => {
   const [daysColumnsData, setDaysColumnsData] = useState<ColumnsType<DataType>>(
     []
   );
+  const [isLoading, setIsLoading] = useState(true);
 
   const usersStore = new UsersStore();
 
@@ -20,12 +22,19 @@ const App: FC = () => {
     usersStore
       .getUsers()
       .then(() => setUsersData(usersStore.tableData))
-      .then(() => setDaysColumnsData(usersStore.getDaysColumns()));
+      .then(() => setDaysColumnsData(usersStore.getDaysColumns()))
+      .then(() => setIsLoading(false));
   }, []);
 
   return (
     <div className={s.container}>
-      <TableComponent daysColumns={daysColumnsData} usersData={usersData} />
+      {isLoading ? (
+        <div className={s.spin_container}>
+          <Spin size="large" />
+        </div>
+      ) : (
+        <TableComponent daysColumns={daysColumnsData} usersData={usersData} />
+      )}
     </div>
   );
 };

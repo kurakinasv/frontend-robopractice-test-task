@@ -1,12 +1,14 @@
-import { FC, useRef } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 
 import { SearchOutlined } from '@ant-design/icons';
 import { InputRef } from 'antd';
 import Table, { ColumnsType, ColumnType } from 'antd/lib/table';
+import { ResizeCallbackData } from 'react-resizable';
 
 import { DataType } from '../../types/types';
 import timeColumnsSorter from '../../utils/timeColumnsSorter';
 import Dropdown from '../Dropdown';
+import ResizableTitle from '../ResizableTitle';
 import s from './TableComponent.module.scss';
 
 type TableComponentProps = {
@@ -19,6 +21,34 @@ const TableComponent: FC<TableComponentProps> = ({
   daysColumns,
 }) => {
   const searchInput = useRef<InputRef>(null);
+
+  const [columns, setColumns] = useState<ColumnsType<DataType>>([]);
+
+  useEffect(() => {
+    setColumns([
+      {
+        title: 'User',
+        dataIndex: 'name',
+        key: 'name',
+        fixed: 'left',
+        width: 180,
+        defaultSortOrder: 'ascend',
+        sorter: (a, b) => ([a.name, b.name].sort()[0] === a.name ? -1 : 1),
+        sortDirections: ['descend'],
+        ...getUserColumnSearchProps(),
+      },
+      ...daysColumns,
+      {
+        title: 'Monthly',
+        dataIndex: 'monthly',
+        key: 'monthly',
+        sorter: (a, b) => timeColumnsSorter(a.monthly, b.monthly),
+        fixed: 'right',
+        width: 130,
+        ellipsis: true,
+      },
+    ]);
+  }, []);
 
   const getUserColumnSearchProps = (): ColumnType<DataType> => ({
     filterDropdown: (props) => <Dropdown {...props} />,
@@ -43,32 +73,33 @@ const TableComponent: FC<TableComponentProps> = ({
     },
   });
 
-  const columns: ColumnsType<DataType> = [
-    {
-      title: 'User',
-      dataIndex: 'name',
-      key: 'name',
-      fixed: 'left',
-      width: 180,
-      defaultSortOrder: 'ascend',
-      sorter: (a, b) => ([a.name, b.name].sort()[0] === a.name ? -1 : 1),
-      sortDirections: ['descend'],
-      ...getUserColumnSearchProps(),
-    },
-    ...daysColumns,
-    {
-      title: 'Monthly',
-      dataIndex: 'monthly',
-      key: 'monthly',
-      sorter: (a, b) => timeColumnsSorter(a.monthly, b.monthly),
-      fixed: 'right',
-      width: 120,
-    },
-  ];
+  const handleResize =
+    (index: number) =>
+    (_: React.SyntheticEvent<Element>, { size }: ResizeCallbackData) => {
+      const newColumns = [...columns];
+      newColumns[index] = {
+        ...newColumns[index],
+        width: size.width,
+      };
+      setColumns(newColumns);
+    };
+
+  const mergeColumns: ColumnsType<DataType> = columns.map((col, index) => ({
+    ...col,
+    onHeaderCell: (column) => ({
+      width: (column as ColumnType<DataType>).width,
+      onResize: handleResize(index),
+    }),
+  }));
 
   return (
     <Table
-      columns={columns}
+      components={{
+        header: {
+          cell: ResizableTitle,
+        },
+      }}
+      columns={mergeColumns}
       dataSource={usersData}
       scroll={{ x: 1300 }}
       className={s.table}

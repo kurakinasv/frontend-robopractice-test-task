@@ -126,6 +126,7 @@ class UsersStore {
         key: day,
         sorter: (a, b) => timeColumnsSorter(a[`time${day}`], b[`time${day}`]),
         width: 70,
+        ellipsis: true,
       });
     }
 
