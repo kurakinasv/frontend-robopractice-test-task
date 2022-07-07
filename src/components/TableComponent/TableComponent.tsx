@@ -1,7 +1,7 @@
 import { FC, useEffect, useRef, useState } from 'react';
 
 import { SearchOutlined } from '@ant-design/icons';
-import { InputRef } from 'antd';
+import { Empty, InputRef } from 'antd';
 import Table, { ColumnsType, ColumnType } from 'antd/lib/table';
 import { ResizeCallbackData } from 'react-resizable';
 
@@ -103,6 +103,14 @@ const TableComponent: FC<TableComponentProps> = ({
       dataSource={usersData}
       scroll={{ x: 1300 }}
       className={s.table}
+      locale={{
+        emptyText: (
+          <Empty
+            description={<div className={s.empty}>Nothing here :c</div>}
+            image={Empty.PRESENTED_IMAGE_DEFAULT}
+          />
+        ),
+      }}
     />
   );
 };

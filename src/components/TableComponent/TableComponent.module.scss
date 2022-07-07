@@ -154,7 +154,18 @@
         td.ant-table-cell.ant-table-column-sort.ant-table-cell-row-hover {
             background-color: $row-column-hover;
         }
+
+        .ant-empty {
+            padding-top: 20px;
+        }
     }
+}
+
+.empty {
+    font-size: 22px;
+    font-weight: 300;
+    padding-top: 10px;
+    padding-bottom: 20px;
 }
 
 .react-resizable {
