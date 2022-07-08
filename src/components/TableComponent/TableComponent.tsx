@@ -111,6 +111,8 @@ const TableComponent: FC<TableComponentProps> = ({
           />
         ),
       }}
+      summary={() => <Table.Summary fixed={'top'}></Table.Summary>}
+      sticky
     />
   );
 };
