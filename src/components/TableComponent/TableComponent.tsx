@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, memo, useEffect, useRef, useState } from 'react';
 
 import { SearchOutlined } from '@ant-design/icons';
 import { Empty, InputRef } from 'antd';
@@ -117,4 +117,4 @@ const TableComponent: FC<TableComponentProps> = ({
   );
 };
 
-export default TableComponent;
+export default memo(TableComponent);

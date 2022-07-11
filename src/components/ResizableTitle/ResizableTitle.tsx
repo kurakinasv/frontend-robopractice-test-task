@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 import type { ResizeCallbackData } from 'react-resizable';
 import { Resizable } from 'react-resizable';
 
@@ -38,4 +40,4 @@ const ResizableTitle = (
   );
 };
 
-export default ResizableTitle;
+export default memo(ResizableTitle);

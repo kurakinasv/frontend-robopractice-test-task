@@ -1,7 +1,6 @@
 import { ColumnsType } from 'antd/lib/table';
 
 import { DataType } from '../types/types';
-import errorLog from '../utils/errorLog';
 import getTimeFromMinutes from '../utils/getTimeFromMinutes';
 import timeColumnsSorter from '../utils/timeColumnsSorter';
 
@@ -39,7 +38,8 @@ class UsersStore {
         };
       });
     } catch (e: any) {
-      errorLog('error', e);
+      // eslint-disable-next-line no-console
+      console.log('error', e);
     }
   };
 

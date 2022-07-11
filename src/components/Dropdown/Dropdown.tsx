@@ -1,10 +1,10 @@
-import { FC, useRef } from 'react';
+import { FC, memo, useRef } from 'react';
 
 import { SearchOutlined } from '@ant-design/icons';
 import { Button, Input, InputRef, Space } from 'antd';
 import { FilterConfirmProps } from 'antd/lib/table/interface';
 
-export type DropdownProps = {
+type DropdownProps = {
   setSelectedKeys: (selectedKeys: React.Key[]) => void;
   selectedKeys: React.Key[];
   confirm: (param?: FilterConfirmProps) => void;
@@ -54,4 +54,4 @@ const Dropdown: FC<DropdownProps> = ({
   );
 };
 
-export default Dropdown;
+export default memo(Dropdown);
